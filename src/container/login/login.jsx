@@ -1,12 +1,22 @@
 import React, {Component} from 'react'
 import {WingBlank,WhiteSpace, Button, List, InputItem, NavBar} from "antd-mobile";
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 
 import Logo from '../../components/logo/logo'
+import {login} from '../../redux/actions'
 
-export default class Login extends Component{
+import '../../assets/css/index.css'
+
+class Login extends Component{
     state= {
         username: '',
         password: '',
+    }
+    static propType = {
+        user: PropTypes.object.isRequired,
+        login:PropTypes.func.isRequired
     }
     changeHandle= (name, val) => {
         this.setState({
@@ -14,17 +24,22 @@ export default class Login extends Component{
         })
     }
     submitHandle = ()=>{
-        console.log(this.state)
+        this.props.login(this.state)
     }
     toRegister =()=> {
         this.props.history.replace('/register')
     }
     render() {
+        const {msg, redirectTo} = this.props.user
+        if (redirectTo) {
+           return <Redirect to={redirectTo}/>
+        }
         return(
             <div>
                 <NavBar>Welcome</NavBar>
                 <Logo/>
                 <WingBlank>
+                    {msg? <div className='error-msg'>{msg}</div>: ''}
                     <List>
                         <WhiteSpace/>
                         <InputItem placeholder='请输入用户名' onChange={(val) =>{this.changeHandle('username', val)}}>用户名：</InputItem>
@@ -39,3 +54,4 @@ export default class Login extends Component{
         )
     }
 }
+export default connect(state => ({user:state.user}),{login})(Login)
