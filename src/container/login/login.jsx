@@ -7,8 +7,6 @@ import { Redirect } from 'react-router-dom'
 import Logo from '../../components/logo/logo'
 import {login} from '../../redux/actions'
 
-import '../../assets/css/index.css'
-
 class Login extends Component{
     state= {
         username: '',

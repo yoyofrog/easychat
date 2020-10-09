@@ -41,9 +41,11 @@ class Register extends Component{
     }
 
     render() {
+
         const {type} = this.state
         const {msg, redirectTo} = this.props.user
         if(redirectTo) {
+            console.log(this.props.user)
             return <Redirect to={redirectTo}/>
         }
         return(
