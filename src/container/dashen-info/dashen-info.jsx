@@ -33,7 +33,7 @@ class DashenInfo extends Component {
     }
 
     render() {
-        const {type, header} = this.props.user
+        const { header} = this.props.user
         if (header) {
             return (<Redirect to={'dashen'}/>)
         }
