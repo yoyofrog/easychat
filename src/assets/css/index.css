@@ -6,9 +6,10 @@
 
 .am-tab-bar {
     position:fixed;
-    bottom: 0;
+    bottom:0;
     width: 100%;
-    height: 50px;
+    /*//包裹内容*/
+    height: inherit;
 }
 .top-nav {
     z-index: 5;
@@ -19,4 +20,16 @@
 .top-space {
     margin-top: 50px;
     margin-bottom: 50px;
+}
+.item-height {
+    height: inherit;
+}
+
+/*消息文本居右*/
+#chat-page .chat-me .am-list-extra {
+flex-basis: auto; /*宽度包裹内容*/
+}
+#chat-page .chat-me .am-list-content {
+padding-right: 15px;
+text-align: right;
 }

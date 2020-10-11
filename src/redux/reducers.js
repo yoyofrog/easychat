@@ -1,5 +1,5 @@
 import { combineReducers} from "redux";
-import { AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER, RECEIVE_USER_LIST } from "./action-types";
+import { AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER, RECEIVE_USER_LIST, RECEIVE_MSG, RECEIVE_MSG_LIST } from "./action-types";
 import {getRedirect} from '../utils/index'
 
 const initUser = {
@@ -35,5 +35,30 @@ const userList =(state = initUserList , action)=> {
     }
 
 }
+// 产生聊天状态reducer
+const initChat ={
+    users: {},
+    chatMsgs: [],
+    unReadCount: 0
 
-export default combineReducers({user, userList})
+}
+function chat(state=initChat, action) {
+    switch(action.type){
+        case RECEIVE_MSG:
+            return {
+                users: state.users,
+                chatMsgs: [...state.chatMsgs, action.data],
+                unReadCount: 0
+            }
+        case RECEIVE_MSG_LIST:
+            const {users, chatMsgs} = action.data
+            return {users, chatMsgs, unReadCount: 0}
+        default:
+            return state
+    }
+
+
+}
+
+
+export default combineReducers({user, userList, chat})

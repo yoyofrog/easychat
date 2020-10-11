@@ -12,6 +12,7 @@ import Dashen from "../dashen/dashen";
 import Personal from "../personal/personal";
 import NotFound from "../../components/not-found/notFound";
 import NavFooter from "../../components/nav-footer/navFooter";
+import Chat from "../chat/chat";
 
 import {getRedirect} from "../../utils";
 import {getUser} from '../../redux/actions'
@@ -95,11 +96,12 @@ class Main extends Component {
             <div>
                 {currentNav? <NavBar className='top-nav'>{currentNav.title}</NavBar>: null}
                 <Switch>
-                    <Route path='/dasheninfo' component={DashenInfo}></Route>
-                    <Route path='/laobaninfo' component={LaobanInfo}></Route>
                     {navList.map((nav, index)=> {
                         return <Route key={index} path={nav.path} component={nav.component}/>
                     })}
+                    <Route path='/dasheninfo' component={DashenInfo}/>
+                    <Route path='/laobaninfo' component={LaobanInfo}/>
+                    <Route path='/chat/:userid' component={Chat}/>
                     <Route component={NotFound}></Route>
                 </Switch>
                  {currentNav? <NavFooter navList={navList}/>: null}
