@@ -104,10 +104,10 @@ class Main extends Component {
                     <Route path='/chat/:userid' component={Chat}/>
                     <Route component={NotFound}></Route>
                 </Switch>
-                 {currentNav? <NavFooter navList={navList}/>: null}
+                 {currentNav? <NavFooter unReadCount={this.props.chat.unReadCount} navList={navList}/>: null}
             </div>
         )
     }
 }
 
-export default connect(state => ({user: state.user}), {getUser})(Main)
+export default connect(state => ({user: state.user, chat: state.chat}), {getUser})(Main)

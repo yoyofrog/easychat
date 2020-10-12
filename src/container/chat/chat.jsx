@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {NavBar, List, InputItem, Grid, Icon} from 'antd-mobile'
 
-import {sendMsg} from '../../redux/actions'
+import {sendMsg, msgRead} from '../../redux/actions'
 
 const Item = List.Item
 
@@ -16,16 +16,23 @@ class Chat extends Component {
         //初始化表情包数据
         const emojis = ['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇','🥰','😍','🤩','😘','😗','☺','😚','😙','😋','😛','😜','🤪']
         this.emojis = emojis.map(emoji => ({text: emoji}))
-        console.log(this.emojis)
     }
     componentDidMount() {
         // 初始显示列表
         window.scrollTo(0, document.body.scrollHeight)
+
         }
     componentDidUpdate () {
         // 更新显示列表
+        console.log('update')
         window.scrollTo(0, document.body.scrollHeight)
     }
+    componentWillUnmount() {
+        const targetId = this.props.match.params.userid
+        const userId = this.props.user._id
+        this.props.msgRead(targetId, userId)
+    }
+
     toggleShow=()=> {
         let isShow =!this.state.isShow
         this.setState({isShow})
@@ -75,7 +82,7 @@ class Chat extends Component {
                     onLeftClick={()=> this.props.history.goBack()}>
                         {users[targetId].username}
                     </NavBar>
-                <List multipleLine className='top-space'>
+                <List className='top-space'>
                     {
                         msgs.map((msg)=> {
                             if (msg.from === targetId) {
@@ -132,4 +139,4 @@ class Chat extends Component {
     }
 }
 
-export default connect(state => ({user: state.user, chat: state.chat}), {sendMsg})(Chat)
+export default connect(state => ({user: state.user, chat: state.chat}), {sendMsg, msgRead})(Chat)

@@ -1,7 +1,7 @@
 import io from 'socket.io-client'
 
 import {reqRegister, reqLogin, reqUpdate, reqUser, reqUserList, reqChatMsgList, reqReadMsg} from "../api";
-import {AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER, RECEIVE_USER_LIST, RECEIVE_MSG_LIST, RECEIVE_MSG} from "./action-types";
+import {AUTH_SUCCESS, ERROR_MSG, RECEIVE_USER, RESET_USER, RECEIVE_USER_LIST, RECEIVE_MSG_LIST, RECEIVE_MSG, READ_MSG} from "./action-types";
 
 
 const authSuccess = (user) => ({type: AUTH_SUCCESS, data: user})
@@ -9,9 +9,10 @@ const errorMsg = (msg) => ({type: ERROR_MSG, data: msg})
 const receiveUser = (user) => ({type: RECEIVE_USER, data: user})
 export const resetUser = (msg) => ({type: RESET_USER, data: msg})
 const receiveUserList = (userList) => ({type: RECEIVE_USER_LIST, data: userList})
-const receiveMsgList = ({users, chatMsgs}) => ({type: RECEIVE_MSG_LIST, data:{users, chatMsgs} })
+const receiveMsgList = ({users, chatMsgs, userid}) => ({type: RECEIVE_MSG_LIST, data:{users, chatMsgs, userid} })
 // 接收消息的同步action
-const receiveMsg =(chatMsg) => ({type: RECEIVE_MSG, data:chatMsg})
+const receiveMsg =(chatMsg, userid) => ({type: RECEIVE_MSG, data:{chatMsg, userid}})
+const readMsg = ({count, from, to})=> ({type: READ_MSG, data:{count, from, to}})
 
 
 async function getMsgList(dispatch, userid) {
@@ -20,7 +21,7 @@ async function getMsgList(dispatch, userid) {
     const result = response.data
     if (result.code === 0) {
         const{ users, chatMsgs } = result.data
-        dispatch(receiveMsgList({users, chatMsgs}))
+        dispatch(receiveMsgList({users, chatMsgs, userid}))
     }
 }
 
@@ -117,8 +118,9 @@ function initIO(dispatch, userid) {
         io.socket.on('receiveMsg', (chatMsg) => {
             console.log('客户端收到信息',chatMsg)
             //只有当chatMsg是与当前用户相关的消息，采取分发同步action保存消息
-            if (userid === chatMsg.from|| userid ===chatMsg.to)
-                dispatch(receiveMsg(chatMsg))
+            if (userid === chatMsg.from|| userid ===chatMsg.to) {
+                dispatch(receiveMsg(chatMsg, userid))
+            }
         })
     }
 }
@@ -128,5 +130,21 @@ export function sendMsg({from, to, content}) {
         initIO()
         io.socket.emit('sendMsg', {from, to, content})
     }
+
+}
+
+export function msgRead(targetId, userId) {
+    return async dispatch => {
+        const response = await reqReadMsg(targetId)
+        const result = response.data
+        if (result.code === 0) {
+            const count = result.data
+            const from = targetId
+            const to = userId
+            dispatch(readMsg({count, from, to}))
+        }
+
+    }
+
 
 }
